@@ -1,0 +1,44 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install Dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Test Application
+      run: |
+        source venv/bin/activate
+        python -m unittest discover
+
+    - name: Build Docker Image
+      run: |
+        docker build -t flask-app-devops .
+
+    - name: Deploy to Heroku
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: |
+        echo "Deploying to Heroku..."
+        docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+        docker tag flask-app-devops registry.heroku.com/tu-app-heroku/web
+        docker push registry.heroku.com/tu-app-heroku/web
+        heroku container:release web --app tu-app-heroku
