@@ -44,5 +44,5 @@ jobs:
           AWS_REGION: us-east-2
           # AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          eb init -p docker flask-app-devops --region us-east-2
+          eb init -p docker flask-app-devops --region 'us-east-2'
           eb deploy
