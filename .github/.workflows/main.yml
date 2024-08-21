@@ -29,16 +29,13 @@ jobs:
         source venv/bin/activate
         python -m unittest discover
 
-    - name: Build Docker Image
-      run: |
-        docker build -t flask-app-devops .
-
-    - name: Deploy to Heroku
+    - name: Deploy to Elastic Beanstalk
       env:
-        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: 'us-east-1'
       run: |
-        echo "Deploying to Heroku..."
-        docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-        docker tag flask-app-devops registry.heroku.com/tu-app-heroku/web
-        docker push registry.heroku.com/tu-app-heroku/web
-        heroku container:release web --app tu-app-heroku
+        pip install awsebcli
+        eb init -p python-3.8 flask-app-devops --region $AWS_DEFAULT_REGION
+        eb create flask-app-env
+        eb deploy
