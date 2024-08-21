@@ -1,18 +1,18 @@
-# Usar una imagen base de Python
-FROM python:3.8-slim
+# Usa una imagen base de Python 3.11
+FROM python:3.11-slim
 
-# Establecer el directorio de trabajo
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copiar el archivo de requisitos y luego instalar las dependencias
+# Copia el archivo requirements.txt y lo instala
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto del código de la aplicación
+# Copia el resto de la aplicación
 COPY . .
 
-# Exponer el puerto que Flask usará
+# Expon el puerto que Gunicorn utilizará
 EXPOSE 5000
 
-# Definir el comando de ejecución
-CMD ["python", "app.py"]
+# Comando para ejecutar la aplicación con Gunicorn
+CMD ["gunicorn", "-w", "3", "-b", "0.0.0.0:5000", "app:app"]
