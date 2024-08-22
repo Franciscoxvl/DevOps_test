@@ -26,9 +26,10 @@ jobs:
 
       - name: Build and push Docker image to ECR
         env:
-          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-2.amazonaws.com
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
           ECR_REPOSITORY: flask-app-devops
           IMAGE_TAG: latest
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -41,12 +42,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install AWS Elastic Beanstalk CLI
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y python3-pip
+          pip3 install awsebcli
+
       - name: Deploy to AWS Elastic Beanstalk
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-east-2
-          # AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          eb init -p docker flask-app-devops --region 'us-east-2'
+          eb init -p docker flask-app-devops --region $AWS_REGION
           eb deploy
