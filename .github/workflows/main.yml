@@ -54,6 +54,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          eb init -p docker flask-app-devops --region $AWS_REGION
+          eb init -p docker flask-devops-app --region $AWS_REGION
           eb deploy Flask-devops-app-env-1  
 
