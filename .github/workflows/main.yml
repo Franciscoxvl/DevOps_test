@@ -55,5 +55,5 @@ jobs:
         AWS_REGION: ${{ secrets.AWS_REGION }}
       run: |
         eb init -p docker flask-app-devops --region $AWS_REGION
-        eb deploy Flask-devops-app-env-1  # Usando el nombre de tu entorno
+        eb deploy Flask-devops-app-env-1  
 
