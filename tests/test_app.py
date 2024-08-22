@@ -15,12 +15,12 @@ class BasicTests(unittest.TestCase):
     def test_status(self):
         response = self.app.get('/status')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'"status": "running"', response.data)
+        self.assertIn(b'{"status": "running"}', response.data)
 
     def test_about(self):
         response = self.app.get('/about')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'"message": "This is a sample Flask application"', response.data)
+        self.assertIn(b'{"message": "This is a sample Flask application"}', response.data)
 
 if __name__ == "__main__":
     unittest.main()
